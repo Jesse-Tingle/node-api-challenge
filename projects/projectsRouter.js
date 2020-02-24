@@ -22,11 +22,9 @@ router.get("/:id", async (req, res) => {
 	if (projectList) {
 		return res.status(200).json(projectList);
 	} else {
-		return res
-			.status(500)
-			.json({
-				error: `The project with id ${req.params.id} could not be retrieved.`
-			});
+		return res.status(500).json({
+			error: `The project with id ${req.params.id} could not be retrieved.`
+		});
 	}
 });
 
@@ -48,13 +46,37 @@ router.post("/", async (req, res) => {
 	}
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const project = await projects.get(id);
+		const { name, description, completed } = req.body;
+		console.log("name: ", name);
+		console.log("description: ", description);
+		console.log("completed: ", completed);
+
+		if (project.length < 1) {
+			res.status(400).json({
+				message: `The project with id ${req.params.id} does not exist.`
+			});
+		} else if (!name || !description) {
+			res.status(400).json({
+				message: `Please provide a name, description, and completed status.`
+			});
+		} else {
+			const newProject = { name, description, completed };
+			await projects.update(id, newProject);
+			const updatedProject = await projects.get(id);
+			res.status(200).json(updatedProject);
+		}
+	} catch (err) {
+		res.status(500).json({
+			err,
+			error: "The project information could not be modified."
+		});
+	}
+});
 
 router.delete("/:id", (req, res) => {});
 
-// function validateId() {
-//     return (req, res, next) => {
-//         projects.
-//     }
-// }
 module.exports = router;
