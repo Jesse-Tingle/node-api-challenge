@@ -61,6 +61,24 @@ router.put("/:id", async (req, res) => {
 	}
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const action = await actions.get(id);
+		if (!action) {
+			res
+				.status(400)
+				.json({
+					message: `The action with ID ${req.params.id} does not exist.`
+				});
+		}
+		res.status(200).json(await actions.remove(req.params.id));
+	} catch (error) {
+		res.status(500).json({
+			err,
+			error: "The action could not be removed"
+		});
+	}
+});
 
 module.exports = router;
