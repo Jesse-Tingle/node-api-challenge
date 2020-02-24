@@ -15,12 +15,25 @@ router.get("/", async (req, res) => {
 	}
 });
 
-router.get("/", (req, res) => {});
+router.get("/:id", (req, res) => {});
 
-router.post("/", (req, res) => {});
+router.post("/:id", async (req, res) => {
+	try {
+		const {
+			body,
+			params: { id }
+		} = req;
 
-router.put("/", (req, res) => {});
+		const data = { ...body, project_id: id };
+		const newAction = await actions.insert(data);
+		res.status(201).json(newAction);
+	} catch (error) {
+		return res.status(500).json({ error: "The action could not be posted." });
+	}
+});
 
-router.delete("/", (req, res) => {});
+router.put("/:id", (req, res) => {});
+
+router.delete("/:id", (req, res) => {});
 
 module.exports = router;
