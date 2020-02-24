@@ -51,9 +51,6 @@ router.put("/:id", async (req, res) => {
 		const { id } = req.params;
 		const project = await projects.get(id);
 		const { name, description, completed } = req.body;
-		console.log("name: ", name);
-		console.log("description: ", description);
-		console.log("completed: ", completed);
 
 		if (!project) {
 			res.status(400).json({

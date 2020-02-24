@@ -32,7 +32,34 @@ router.post("/:id", async (req, res) => {
 	}
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const action = await actions.get(id);
+		const { description, notes, completed } = req.body;
+		const project_id = id;
+
+		if (!action) {
+			res.status(400).json({
+				message: `The action with id ${req.params.id} does not exist.`
+			});
+		} else if (!description || !notes) {
+			res.status(400).json({
+				message: `Please provide project ID, description, and notes.`
+			});
+		} else {
+			const newAction = { project_id, description, notes };
+			await actions.update(id, newAction);
+			const updatedAction = await actions.get(id);
+			res.status(200).json(updatedAction);
+		}
+	} catch (error) {
+		res.status(500).json({
+			err,
+			error: "The action information could not be modified."
+		});
+	}
+});
 
 router.delete("/:id", (req, res) => {});
 
