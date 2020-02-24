@@ -24,7 +24,9 @@ router.get("/:id", async (req, res) => {
 	} else {
 		return res
 			.status(500)
-			.json({ error: "The list of projects could not be retrieved." });
+			.json({
+				error: `The project with id ${req.params.id} could not be retrieved.`
+			});
 	}
 });
 
